@@ -1,0 +1,1653 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ĐKKB Q11</title>
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/cupertino/jquery-ui.css">
+    <link rel="stylesheet" href="themes/myTheme.css"/>
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+    <script src="Scripts/jquery.qrcode.js"></script>
+    <script src="Scripts/qrcode.js"></script>
+    <script src="Scripts/base64js.min.js"></script>
+    
+    <!-- confirm dialog -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+<style>
+    
+    /* CSS Document */
+    /* Smartphones (portrait and landscape) ----------- */
+    @media only screen
+    and (min-device-width : 320px)
+    and (max-device-width : 480px) {
+     .fonts
+     {
+      font-size: 75%;
+     }    
+    }
+    /* Smartphones (landscape) ----------- */
+    @media only screen
+    and (min-width : 321px) {
+     .fonts
+     {
+      font-size: 120%;
+     }  
+    }
+    /* Smartphones (portrait) ----------- */
+    @media only screen
+    and (max-width : 320px) {
+     .fonts
+     {
+      font-size: 120%;
+     }  
+    }
+    /* iPads (portrait and landscape) ----------- */
+    @media only screen
+    and (min-device-width : 768px)
+    and (max-device-width : 1024px) {
+     .fonts
+     {
+      font-size: 120%;
+     }    
+    }
+    /* iPads (landscape) ----------- */
+    @media only screen
+    and (min-device-width : 768px)
+    and (max-device-width : 1024px)
+    and (orientation : landscape) {
+     .fonts
+     {
+      font-size: 150%;
+     }    
+    }
+    /* iPads (portrait) ----------- */
+    @media only screen
+    and (min-device-width : 768px)
+    and (max-device-width : 1024px)
+    and (orientation : portrait) {
+
+     .fonts
+     {
+      font-size: 120%;
+     }  
+    }
+    /* Desktops and laptops ----------- */
+    @media only screen
+    and (min-width : 1224px) {
+     .fonts
+     {
+      font-size: 156%;
+     }  
+
+     #pageMain {
+                width: 50%;
+                margin-left: 25%;
+                margin-right: 25%;
+            }
+            #pageQR {
+                width: 50%;
+                margin-left: 25%;
+                margin-right: 25%;
+            }
+            #pageHelp {
+                width: 50%;
+                margin-left: 25%;
+                margin-right: 25%;
+            }  
+
+    }
+    /* Large screens ----------- */
+    @media only screen
+    and (min-width : 1824px) {
+     .fonts
+     {
+      font-size: 200%;
+     }   
+
+    }
+    /* iPhone 4 ----------- */
+    @media
+    only screen and (-webkit-min-device-pixel-ratio : 1.5),
+    only screen and (min-device-pixel-ratio : 1.5) {
+     .fonts
+     {
+      font-size: 190%;
+     }    
+    }
+
+
+     .clsPhongKham {
+         font-size: 10pt;
+     }
+    .introImg {
+        display: inline-block;
+        width: 2.5em;
+    }
+
+    
+</style>
+
+    <script>
+        $(document).ready(function () {
+            var todayDate;
+
+            //record
+            var privateInfo = "";
+            var maBN = "";
+            var hoTenBN = "";
+            var ngayDK = "";
+            var phongKham = "";
+            var soDT = "";
+            var soBHYT = "";
+            var soCC = "";
+
+            //mặc định là onePerson
+            var bOnePerson = true;
+            var msgConfirm = "";
+
+            var settingChosen = "";
+            var infoChosen = 0;
+            var qrStorageCount = 0; //số ảnh QRCode đã lưu
+            var infoStorageCount = 0; //số info đã lưu
+            var bDataStored;
+
+            var bNew = false;
+
+            $('#divInfo').hide();
+            $('#divResult').hide();
+            $('#divDangKy').hide();
+            $('#imgStatus').hide();
+
+            /******* Phiên đăng ký mới, xoá các thẻ đăng ký cũ *****/
+            //localStorage.clear();
+
+
+            //xử lý dựa vào localStorage
+            var storageLen = localStorage.length;
+            if (storageLen > 0) {
+                for (var i = 0; i < localStorage.length; i++) {
+                    var keyName = localStorage.key(i);
+                    if (keyName.indexOf("qrCodeImage") !== -1) {
+                        qrStorageCount++; //số QRCodeImage đã lưu
+                        bDataStored = true;
+                    } else {//số info đã lưu
+                        infoStorageCount++;
+                    }
+                }
+            }
+
+
+            //sắp xếp trong divInfo
+            test(qrStorageCount, 0, 0); //0: back=0, không phải trở về từ trang xem qrCodeImage 
+            /*
+            var touchtime = 0;
+            $('.clsDelete').on('click', function () {
+                if (touchtime == 0) {
+                    touchtime = new Date().getTime();
+                } else {
+                    if (((new Date().getTime()) - touchtime) < 800) {
+                        test(1, 1, 1);
+                        touchtime = 0;
+                    } else {
+                        touchtime = 0;
+                    }
+                }
+            });
+            */
+            
+            $('#btnDelete').on('click', function(){
+                $.confirm({
+                    title: 'Xoá thẻ đăng ký',
+                    content: '(Các) Thẻ đăng ký sẽ được xoá!',
+                    buttons: {
+                        cancel: {
+                            text: 'Huỷ'
+                        },
+                        confirm: {
+                            text: 'Đồng ý',
+                            action: function () {
+                                test(1, 1, 1);
+                            }
+                        }
+                    }
+                });
+            });
+
+            $('#qrMode').on('click', function () {
+                if ($('#qrMode').attr('src').lastIndexOf('qrDelete') < 0) {
+                    $.mobile.changePage("#pageQR");
+
+                    var html1, html2, html3;
+                    $.each(localStorage, function (key, value) {
+                        if (key.indexOf('qrCodeImage1') > -1) {
+                            var qr1 = localStorage.getItem(key);
+                            var text1 = localStorage.getItem('qrCodeText1');
+                            html1 =
+                                "<div class='ui-block-a' style='width:40%; heigth: 250px; padding: 8% 1%; text-align:center;'><img src='" + qr1 + "' style='width:80px;'></div>" +
+                                "<div class='ui-block-b' style='width:60%; heigth: 250px; font-size: 9pt;'><p>" + text1 + "</p></div>";
+                        }
+
+                        if (key.indexOf('qrCodeImage2') > -1) {
+                            var qr2 = localStorage.getItem(key);
+                            var text2 = localStorage.getItem('qrCodeText2');
+                            html2 =
+                                "<div class='ui-block-a' style='width:40%; heigth: 250px; padding: 8% 1%; text-align:center;'><img src='" + qr2 + "' style='width:80px;'></div>" +
+                                "<div class='ui-block-b' style='width:60%; heigth: 250px; font-size: 9pt;'><p>" + text2 + "</p></div>";
+                        }
+                        if (key.indexOf('qrCodeImage3') > -1) {
+                            var qr3 = localStorage.getItem(key);
+                            var text3 = localStorage.getItem('qrCodeText2');
+                            html3 =
+                                "<div class='ui-block-a' style='width:40%; heigth: 250px; padding: 8% 1%; text-align:center;'><img src='" + qr3 + "' style='width:80px;'></div>" +
+                                "<div class='ui-block-b' style='width:60%; heigth: 250px; font-size: 9pt;'><p>" + text3 + "</p></div>";
+                        }
+                    });
+
+                    //var htmlResult = html1 + html2 + html3;
+                    var htmlResult = html1;
+
+                    ((html2 !== undefined) ? htmlResult = htmlResult + html2 : htmlResult = htmlResult);
+                    ((html3 !== undefined) ? htmlResult = htmlResult + html3 : htmlResult = htmlResult);
+
+
+
+                    $('#fdsResult').html(htmlResult);
+                }
+            });
+
+            /*******************************************************/
+
+            /******** Giá trị info cá nhân đã lưu, nếu có *******/
+            html5_storage_support();
+
+            //localStorage.clear();
+
+            //xử lý thông tin trong localStorage, nếu có
+            var infoStored = "";
+
+            //hiển thị thông tin cá nhân, trong chế độ OnePerson và chưa có qrCode nào được lưu
+            infoStored = localStoragePopulate(bOnePerson);
+
+            /*****************************************/
+
+            /************* cấu hình****************/
+            //$('#idInfo').focus(function () {
+            //    $('html, body').animate({
+            //        //scrollTop: $(this).offset().top
+            //    }, 1000);
+            //});
+
+            $('#idInfo').focus(function () {
+                $('html, body').scrollTop(100);
+            });
+
+            //$('#idInfo').focusout(function () {
+            //    $('html, body').scrollTop(-100);
+            //});
+
+            //chọn cấu hình OnePerson
+            $('#singleMode').on('click', function () {
+                $('#imgStatus').attr('src', 'Images/pBlue.png');
+                $('#imgStatus').show();
+
+
+                $('#divIntro').hide();
+                bOnePerson = true;
+
+                if (localStorage.length == 1) {
+                    infButtonsAppearance("0001");
+                }
+
+                $('#divInfo').show();
+                $('#divInfo').trigger("expand");
+            });
+
+            //chọn cấu hình Many
+            $('#multiMode').on('click', function () {
+                $('#imgStatus').attr('src', 'Images/ppBlue.png');
+                $('#imgStatus').show();
+
+
+                $('#divIntro').hide();
+                bOnePerson = false;
+
+                //trong chế độ Many person:  không lưu gì cả!
+                localStorage.clear();
+                qrStorageCount = 0;
+
+                $('#lblInfoName').empty();
+
+                $('#imgQr').attr('src', "Images/qrgrey.png");
+
+                localStoragePopulate(bOnePerson); //bOnePerson = false;
+
+                $('#divInfo').show();
+                $('#divInfo').trigger("expand");
+                $('#aReset').trigger('click');
+
+                //rdoInfo
+                $('input:radio[name="rdoInfo"]').removeAttr('checked');
+            });
+
+            $('#aCancel').on('click', function () {
+                //divInfo
+                $('#aReset').trigger('click');
+                infButtonsAppearance("0001");
+
+                $('#divNgayDK').hide();
+
+                var newTitle3 = "3. Phòng Khám";
+                $('#divPhongKham h4 #partThree').text(newTitle3);
+                $('#divPhongKham').hide();
+                $('#divDangKy').hide();
+            });
+
+            $('#imgP').on('click', function () {
+                bOnePerson = true;
+
+                if (localStorage.length == 1) {
+                    infButtonsAppearance("0001");
+                }
+
+                $('#divInfo').show();
+            });
+
+            $('#imgPp').on('click', function () {
+                bOnePerson = false;
+
+                $('#aSave').show();
+
+                //trong chế độ Many person:  không lưu gì cả!
+                localStorage.clear();
+                qrStorageCount = 0;
+
+                //var test = localStorage.getItem("BN");  //must have?
+
+                $('#lblInfoName').empty();
+
+                $('#imgQr').attr('src', "Images/qrgrey.png");
+
+                localStoragePopulate(bOnePerson); //bOnePerson = false;
+
+                $('#divInfo').show();
+
+                //rdoInfo
+                $('input:radio[name="rdoInfo"]').removeAttr('checked');
+            });
+
+
+            $('#imgQr').on('click', function () {
+
+                $.mobile.changePage("#pageQR");
+
+                if (localStorage.getItem("qrCodeImage1")) {
+                    var qr = "";
+                    for (var i = 0; i < localStorage.length; i++) {
+                        var keyName = localStorage.key(i);
+                        if (keyName.indexOf("qrCodeImage") !== -1) {
+                            qr = localStorage.getItem(keyName); //base64data
+                            var image = $("<img>", {
+                                "id": "qrResult" + i.toString(),
+                                "src": qr,
+                                "width": "150px",
+                                "height": "150px"
+                            });
+                            var row = "";
+                            if (i % 2 === 0)
+                                row = $("<tr style='padding-bottom: 3em; text-align: right;'></tr>").append("<td></td>").html(image);
+                            else {
+                                row = $("<tr style='padding-bottom: 3em; text-align: left;'></tr>").append("<td></td>").html(image);
+                            }
+
+                            $('#tblQr tbody').append(row);
+
+                        }
+                    }
+                }
+
+
+
+            });
+
+
+            /*****************************************/
+
+            /********** Ẩn các div collapsible chưa cho phép ***********/
+            $('#divInfo').hide();
+
+            $('#divNgayDK').hide();
+            $('#divPhongKham').hide();
+
+            /***********************************************/
+
+            /************* Chọn loại cấu hình***************/
+            //default
+            settingChosen = "one";
+            $('.setting').on('click', function (e) {
+                settingChosen = ($(this).val());
+            });
+            /***********************************************/
+
+            /********* Chọn label info  ***********/
+
+            //idInfo clear button click
+            $(".ui-input-clear").on("click", function () {
+
+            });
+
+            //chọn label loại info
+            $(".info").on('click', function (e) {
+                infoChosen = ($(this).val());
+
+                //hiện textbox nhập info
+                $('#divInfoEntry').show();
+                $('#divInfoEntry').trigger('click');
+
+                //hiện divInfoButtons chứa các nút Lưu, Reset, Tiếp
+                $('#divInfoButtons').show();
+
+                //thay đổi text của lblInfoName
+                $('#lblInfoName').empty();
+                $('#lblInfoName').append($(this).val() + ": ");
+
+                //focus textbox idInfo
+                $('#idInfo').focus();
+                $(".ui-input-clear").trigger('click');
+
+                //ẩn hiện các info buttons
+                if (bOnePerson)
+                    infButtonsAppearance("1100");  //Đã chọn một label info
+                else {
+                    infButtonsAppearance("0001");
+                }
+            });
+
+            /******************************************/
+
+            /**** Ngày đăng ký ******/
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if (dd.toString().length < 2)
+                dd = "0" + dd;
+            if (mm.toString().length < 2)
+                mm = "0" + mm;
+
+            todayDate = dd + "/" + mm + "/" + yyyy;
+
+            $('#calendar').datepicker({
+                minDate: new Date(),
+                maxDate: "+1m",
+                dateFormat: "dd/mm/yy",
+                onSelect: function (selected) {
+                    $("#calendar").datepicker("option", "minDate", selected);
+                },
+                beforeShowDay: function (date) {
+                    var day = date.getDay();
+                    return [(day !== 0), ''];
+                }
+            });
+
+            //ngày chọn là today
+            $("#calendar").val(todayDate);
+
+            /*************************************/
+
+            /************* select Phong Kham ***********/
+
+            $('#sltPhongKham').change(function () {
+                var select = document.getElementById("sltPhongKham");
+                var index = select.selectedIndex;
+                if (index !== 0) {
+                    phongKham = $('#sltPhongKham option:selected').text();
+                }
+            });
+
+            //để thêm khoảng trống ở cuối
+            $('#divInfo').bind('expand', function () {
+                $('html, body').scrollTop(150);
+            });
+
+            $('#divPhongKham').bind('expand', function () {
+                //$("#sltPhongKham").val("0").change();
+            });
+
+            $('#divInfo').bind('expand', function () {
+                //khi bOnePerson là false
+                //$('#fdset').show();  //hiện các label info
+
+                if (!bOnePerson) {
+                    $('#fdset').show();  //hiện các label info
+
+                    //tìm radio button đã chọn (nếu có) và uncheck
+                    var rdoId = $(":radio[value='" + infoChosen + "']").attr('id');
+                    $('#' + rdoId).prop('checked', false);
+                    $("input[type='radio']").checkboxradio("refresh");
+
+                    //xoá lblInfoName
+                    $('#lblInfoName').empty();
+
+                    //clear textbox idInfo
+                    $('#idInfo').val('');
+                } else { //bOnePerson
+                    if (infoStorageCount > 0) {
+                        $('#fdset').hide();
+                        //infButtonsAppearance("1100");
+                    }
+                }
+
+
+            });
+
+            /*****************Next links********************/
+
+            //thông tin cá nhân next
+            $('#aNext1').on('click', function () {
+                if ($('#idInfo').val() !== "") {
+                    $('#divNgayDK').show();
+                    $('#divPhongKham').hide();
+                    $('#divDangKy').hide();
+
+                    if (infoChosen !== 0) {
+                        var newTitle1 = "1. " + infoChosen + ":  " + $('#idInfo').val();
+                        $("#divInfo h4 #partOne").text(newTitle1);
+                    }
+
+                    privateInfo = infoChosen + "@" + $('#idInfo').val();
+                }
+
+                //cho fdset hiện lên vì có thể đã hide sau khi bấm nút Save
+                $('#fdset').show();
+
+                $('#divNgayDK').trigger("expand");
+                $('html, body').scrollTop(-100);
+            });
+
+            //ngày đăng ký next
+            $('#aNext2').on('click', function () {
+                $('#divPhongKham').show();
+                $('#divDangKy').hide();
+                var newTitle2 = "2. Ngày: " + $('#calendar').val();
+
+                ngayDK = $('#calendar').val();
+
+                $('#divNgayDK h4 #partTwo').text(newTitle2);
+
+                $('#divPhongKham').trigger("expand");
+            });
+
+            $('#aNext3').on('click', function () {
+                if (phongKham) {
+                    $('#divDangKy').show();
+                    var newTitle3 = "3. Phòng Khám: " + phongKham;
+                    $('#divPhongKham h4 #partThree').text(newTitle3);
+                } else {
+                    $('#popupDialogPhongKham').popup('open');
+                }
+
+                $('#divDangKy').trigger("expand");
+            });
+
+            $('#divDangKy').bind('expand', function () {
+                $('.cont').find('.btn').css('visibility', 'hidden'); //ẩn nút Đăng Ký Tiếp (có class = "btn")
+                $('.cont').find('.ui-block-b').find('.pText').html('');
+            });
+
+            //Bấm Save: lưu thông tin cá nhân vào localStorage
+            $('#aSave').on('click', function () {
+                var dataValue = "";
+                if ($('#idInfo').val() !== "") {
+                    dataValue = $('#idInfo').val();
+                    infoStored = "";
+                    saveInfo(infoChosen, dataValue);
+                } else {
+                    $('#popupDialog').popup('open');
+                }
+
+                //ẩn các info label không cho chọn nữa
+                $('#fdset').hide();
+            });
+
+            //reset thông tin cá nhân
+            $('#aReset').on('click', function () {
+                //var bVis = $('#fdset').is(':visible');
+                //if (bVis) {
+                $('#fdset').show();
+                $('#lblInfoName').empty();
+                $('#idInfo').val("");
+
+                $('#aSave').show();
+                $('#aNext1').show();
+
+                $('#divNgayDK').hide();
+
+                //vì tạo lại nên xoá dữ liệu cũ trong localStorage đang có
+                infoStored = "";
+
+                //xoá thông tin cá nhân cũ
+                searchNDelteItemInLocalStorage(infoChosen); //fake infoChosen
+
+                //reset lại các radio buttons info
+                $('input[name="rdoInfo"]').attr('checked', false);
+                $("input[type='radio']").checkboxradio("refresh");
+
+                //title của partOne:
+                var newTitle1 = "1. " + "Thông tin cá nhân";
+                $("#divInfo h4 #partOne").text(newTitle1);
+                //}
+            });
+
+            //đăng ký
+            $('#aRegister').on('click', function () {
+                var regInfo = "";
+                var BN = "";
+                var HT = "";
+                var DT = "";
+                var BH = "";
+                var CC = "";
+                var HC = "";
+                var key = "";
+                var value = "";
+
+                if (infoStored || localStorage.length == 1) //infoStored == Đã bấm Save để lưu.
+                {
+                    if (typeof (infoStored) !== "undefined") {
+                        var infoStoredSplited = infoStored.split('@');
+                        key = infoStoredSplited[0];
+                        value = infoStoredSplited[1];
+                        switch (key) {
+                        case ("Mã Bệnh Nhân:"):
+                            BN = value.toString();
+                            break;
+                        case ("Họ Tên:"):
+                            HT = value.toString();
+                            break;
+                        case ("Số Điện thoại:"):
+                            DT = value.toString();
+                            break;
+                        case ("Số thẻ BHYT:"):
+                            BH = value.toString();
+                            break;
+                        case ("Số Căn Cước:"):
+                            CC = value.toString();
+                            break;
+                        case ("Số Hộ Chiếu"):
+                                HC = value.toString();
+                                break;
+                        }
+                    }
+
+                    var keyName = "";
+                    if (localStorage.length == 1) {
+                        keyName = localStorage.key(0);
+                        switch (keyName) {
+                        case ("BN"):
+                            BN = localStorage.getItem(keyName);
+                            break;
+                        case ("HT"):
+                            HT = localStorage.getItem(keyName);
+                            break;
+                        case ("DT"):
+                            DT = localStorage.getItem(keyName);
+                            break;
+                        case ("BH"):
+                            BH = localStorage.getItem(keyName);
+                            break;
+                        case ("CC"):
+                            CC = localStorage.getItem(keyName);
+                            break;
+                        case ("HC"):
+                            HC = localStorage.getItem(keyName);
+                            break;
+                        }
+                    }
+
+                } else if (privateInfo) { //Không bấm Save
+                    var privateInfoSplited = privateInfo.split('@');
+                    key = privateInfoSplited[0];
+                    value = privateInfoSplited[1];
+
+                    switch (key) {
+                    case ("Mã Bệnh Nhân"):
+                        BN = value.toString();
+                        break;
+                    case ("Họ Tên"):
+                        HT = value.toString();
+                        break;
+                    case ("Số Điện thoại"):
+                        DT = value.toString();
+                        break;
+                    case ("Số Thẻ BHYT"):
+                        BH = value.toString();
+                        break;
+                    case ("Số Căn Cước"):
+                        CC = value.toString();
+                        break;
+                    case ("Số Hộ Chiếu"):
+                        HC = value.toString();
+                        break;
+                    }
+                }
+
+                $('#divResult').show();
+
+                ngayDK = ngayDK.toString();
+                phongKham = phongKham.toString();
+               
+                var registerInfo = {
+                    'ip': 'mrquang',
+                    'ngay': ngayDK,
+                    'tenpk': phongKham.toUpperCase(),
+                    'sodienthoai': DT,
+                    'socmnd': CC,
+                    'mabn': BN.toUpperCase(),
+                    'sohochieu': HC.toUpperCase(),
+                    'sothe': BH.toUpperCase(),
+                    'hoten': HT.toUpperCase()
+                }
+
+                var ngay = ngayDK.toString();
+                var pk = phongKham.toString();
+
+
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    crossDomain: true,
+                    url: "http://api.benhvienquan11.vn/api/datkham/?ip=" + registerInfo.ip + "&ngay=" + registerInfo.ngay + "&tenpk=" +
+                        registerInfo.tenpk + "&sodienthoai=" + registerInfo.sodienthoai + "&socmnd=" + registerInfo.socmnd + "&sohochieu=" + registerInfo.sohochieu +
+                        "&mabn=" + registerInfo.mabn + "&sothe=" + registerInfo.sothe + "&hoten=" + registerInfo.hoten,
+                    //timeout: 1000,
+                    success: function (data) {
+                        //tạo qrcode và hiển thị
+                        display(data, qrStorageCount, bOnePerson);
+                    },
+                    error: function (data, errorThrown) {
+                        alert('Ajax request failed :' + errorThrown);
+                    }
+                });
+
+                
+            });
+
+            $('#btnCtnReg').on('click', function () {
+                $('#divDangKy').trigger("collapse");
+                $('#myImage').attr('src', '');
+                $('#myImage').hide();
+
+                $('#divResult').html('');
+                $('#divResult').hide();
+                $('#btnCtnReg').css('visibility', 'hidden');
+
+                $('#pConfirm').show();
+                $('#divRegButtons').show();
+
+                $('#divNgayDK').hide();
+                $('#divPhongKham').hide();
+                $('#divDangKy').hide();
+
+                //đặt lại các title và các input textbox
+                var newTitle1 = "1. Thông tin cá nhân";
+                $("#divInfo h4 #partOne").text(newTitle1);
+
+                //reset lại các radio buttons info
+                $('input[name="rdoInfo"]').attr('checked', false);
+
+                newTitle1 = "3. Phòng khám";
+                $('#divPhongKham h4 #partThree').text(newTitle1);
+
+                //tăng qrStorageCount thêm 1, vì chỉ khi reload page qrStorageCount mới được tính
+                qrStorageCount++;
+                $.mobile.silentScroll(0);
+
+                $('#divInfo').trigger("expand");
+
+            });
+
+            //$('#divTextRow3').on('click', function() {
+            //    var src = $('#qrMode').attr('src');
+            //    if (src.lastIndexOf('qrDelete') < 0)
+            //        $('#qrMode').trigger('click');
+            //});
+        });
+
+        function test(storage, back, refresh) {
+            if (back == 1) {
+                //chỉ xoá các qrCode image và qrCodeText.  Vẫn giữ info cá nhân
+                searchNDelteItemInLocalStorage('qr');
+            }
+
+            if (refresh == 1) {
+                $.mobile.changePage($('#pageMain'), { transition: "turn" });
+                location.reload();
+
+                $('#divInfo').css('visibility', 'hidden');
+                $('#divNgayDK').hide();
+                $('#divPhongKham').hide();
+                $('#divDangKy').hide();
+
+                refreshPage();
+            }
+
+            if (storage >= 1) { //storage là qrStorageCount
+
+                //điều kiện divIntro:  chỉ cho chức năng xem các qrCodeImage
+                $('#divTextRow1').css('text-decoration', 'line-through');
+                $('#divTextRow2').css('text-decoration', 'line-through');
+                $('#singleMode').attr('src', 'Images/pDelete.png');
+                $('#multiMode').attr('src', 'Images/ppDelete.png');
+                $('#singleMode').removeAttr("onclick");
+                $('#multiMode').removeAttr("onclick");
+
+                $('#divIntro').show();
+            }
+            else if (storage == 0) {
+                //điều kiện intro
+                $('#divTextRow1').css('text-decoration', 'none');  //không gạch bỏ
+                $('#divTextRow2').css('text-decoration', 'none');
+
+                $('#divTextRow3').css('text-decoration', 'line-through'); //không còn qrCode Image để xem
+
+                $('#singleMode').attr('src', 'Images/pBlue.png');
+                $('#multiMode').attr('src', 'Images/ppBlue.png');
+
+                $('#qrMode').attr('src', 'Images/qrDelete.png');
+                $('#qrMode').removeAttr("onclick");
+
+                $('#divIntro').show();
+            }
+
+        }
+
+        function refreshPage() {
+            $.mobile.changePage(
+                window.location.href,
+                {
+                    allowSamePageTransition: true,
+                    transition: 'none',
+                    showLoadMsg: false,
+                    reloadPage: true
+                }
+            );
+        }
+
+
+        /************ local storage ***************/
+        function html5_storage_support() {
+            //check to see if this browser support local storage: return true if so, false if not
+            try {
+                return 'localStorage' in window && window['localStorage'] !== null;
+            } catch (e) {
+                return false;
+
+            }
+        }
+        /*****************************************/
+        //xoá các thông tin qrcode hay thông tin cá nhân trong localstorage
+        function searchNDelteItemInLocalStorage(option) {
+
+            $.each(localStorage, function (key) {
+                if (option == "qr") {
+                    if (key.indexOf("qrCode") !== -1)
+                        localStorage.removeItem(key);
+                } else {
+                    if ((key.indexOf("qrCode") < 0))
+                        localStorage.removeItem(key);
+                }
+            });
+        }
+
+        //Bấm nút Save:  xoá dữ liệu đang có, lưu dữ liệu về Info mới
+        function saveInfo(data, dataValue) {
+            //đặt tên biến lưu thông tin
+            var chosenDataName = "";
+            switch (data) {
+            case "Mã Bệnh Nhân":
+                chosenDataName = "BN";
+                break;
+            case "Họ Tên":
+                chosenDataName = "HT";
+                break;
+            case "Số Điện thoại":
+                chosenDataName = "DT";
+                break;
+            case "Số Thẻ BHYT":
+                chosenDataName = "BH";
+                break;
+            case "Số Căn Cước":
+                chosenDataName = "CC";
+                break;
+            }
+
+            //xoá tất cả dữ liệu cũ.  Chỉ lưu một dữ liệu
+            try {
+                //xoá thông tin cá nhân cũ
+                searchNDelteItemInLocalStorage(data);  //fake data
+
+                //lưu thông tin cá nhân vào localStorage
+                localStorage.setItem(chosenDataName, dataValue);
+
+                //title của PartOne
+                var newTitle1 = "1. " + data + ": " + dataValue;
+                $("#divInfo h4 #partOne").text(newTitle1);
+
+                $('#popupDialogSaveSuccess').popup('open');
+
+                //lưu thông tin đã chọn vào biến
+                var infoSaved = data + "@" + dataValue;
+                return infoSaved;
+
+            } catch (error) {
+                $('#popupDialogSaveError').popup('open');
+            }
+
+        }
+
+        //lấy tất cả thông tin
+        function allStorage() {
+            var archive = [],
+                keys = Object.keys(localStorage),
+                i = 0, key;
+
+            for (; key = keys[i]; i++) {
+                archive.push(key + '=' + localStorage.getItem(key));
+            }
+
+            return archive;
+            //trả về, thí dụ "MaBN=123"
+        }
+
+
+        //hiển thị label và thông tin lưu (nếu qrStorageCount < 1 tức không có qrCode nào được lưu)
+        function localStoragePopulate(mode) {
+            var dataStorage = allStorage();
+            var lblInfoNameText = "";
+            var valueOfKey = "";
+            if (dataStorage.length > 0) {
+
+                infButtonsAppearance("0010");
+
+                var previousData = dataStorage[0];
+                var previousDataSplited = previousData.split('=');
+                var key = previousDataSplited[0];
+                valueOfKey = previousDataSplited[1];
+
+                //var lblInfoNameText = "";
+                switch (key) {
+                case "BN":
+                    lblInfoNameText = "Mã Bệnh Nhân:";
+                    $('#rdoMaBN').prop('checked', true);
+                    $("input[type='radio']").checkboxradio("refresh");
+                    break;
+                case ("HT"):
+                    lblInfoNameText = "Họ Tên:";
+                    $('#rdoHoTen').prop('checked', true);
+                    $("input[type='radio']").checkboxradio("refresh");
+                    break;
+                case ("DT"):
+                    lblInfoNameText = "Số Điện thoại:";
+                    $('#rdoSoDT').prop('checked', true);
+                    $("input[type='radio']").checkboxradio("refresh");
+                    break;
+                case ("BH"):
+                    lblInfoNameText = "Số thẻ BHYT:";
+                    $('#rdoMaBH').prop('checked', true);
+                    $("input[type='radio']").checkboxradio("refresh");
+                    break;
+                case ("CC"):
+                    lblInfoNameText = "Số Căn Cước:";
+                    $('#rdoSoCC').prop('checked', true);
+                    $("input[type='radio']").checkboxradio("refresh");
+                    break;
+                case ("HC"):
+                        lblInfoNameText = "Số Hộ Chiếu:";
+                        $('#rdoSoHC').prop('checked', true);
+                        $("input[type='radio']").checkboxradio("refresh");
+                        break;
+                }
+
+                //thay đổi text của lblInfoName
+                $('#lblInfoName').empty();
+                $('#lblInfoName').append(lblInfoNameText + ": ");
+
+                //giá trị trong textbox idInfo
+                $('#idInfo').val(valueOfKey);
+
+                //title của PartOne
+                var newTitle1 = "1. " + lblInfoNameText + " " + valueOfKey;
+                $("#divInfo h4 #partOne").text(newTitle1);
+
+                var keyNValueStored = lblInfoNameText + "@" + valueOfKey;
+
+            } else {
+                //title của partOne:
+                var newTitle3 = "1. " + "Thông tin cá nhân";
+                $("#divInfo h4 #partOne").text(newTitle3);
+
+                $('#idInfo').val('');
+
+                $('#divDangKy').hide();  //not working
+                $('#divInfoEntry').hide();
+
+                //ban đầu mode = bOnePerson
+                if (mode)
+                    infButtonsAppearance("1000");
+                else {
+                    infButtonsAppearance("0001");
+                }
+            }
+
+
+        }
+
+        //điều khiển các infoButtons
+        function infButtonsAppearance(state) {
+            switch (state) {
+            case "1000": //ban đầu
+                $('#fdset').show();
+                $('#divInfoButtons').hide(); //không hiện tất cả buttons
+                break;
+            case "1100": //đã chọn 1 label Info: ẩn nút Reset
+                $('#fdset').show();
+                $('#divInfoButtons').show();
+                $('#aSave').show();
+                $('#aReset').hide();
+                $('#aNext1').show();
+                break;
+            case "0010":  //đã lưu một Info: ẩn các label info, ẩn nút Save
+                $('#fdset').hide();
+                $('#aSave').hide();
+                $('#aReset').show();
+                $('#aNext1').show();
+                break;
+            case "0001": //mode ManyPerson: ẩn nút Save
+                $('#fdset').show();
+                $('#aSave').hide();
+                $('#aReset').show();
+                $('#aNext1').show();
+            }
+        }
+
+        function display(data, qrCodeCount, bOnePerson) {
+            $('#pConfirm').hide();
+            $('#divRegButtons').hide();
+
+            $('#divQR').css('visibility', 'hidden');
+            $('#divDisplay').hide();
+
+            //lấy từ dữ liệu trả về của ajax
+            var ngayDK = data[0].ngay;
+            var maBN = data[0].mabn;
+            var tenPhongKham = data[0].tenpk;
+            var sotheBHYT = data[0].sothe;
+            var soDT = data[0].sodienthoai;
+            var soCC = data[0].socmnd;
+            var hoTen = data[0].hoten;
+            var soThuTu = data[0].sothutu;
+            var luotCho = data[0].cho;
+            var gio = data[0].gio;
+            var phut = data[0].phut;
+
+            var infoName = "";
+            var infoValue = "";
+
+            if (qrCodeCount <= 3) {
+                if (soDT) {
+                    infoName = "Số ĐT: ";
+                    infoValue = soDT;
+                } else if (soCC) {
+                    infoName = "Số C.Cước: ";
+                    infoValue = soCC;
+                } else if (hoTen) {
+                    infoName = "Họ Tên: ";
+                    infoValue = hoTen;
+                } else if (maBN) {
+                    infoName = "Mã BN: ";
+                    infoValue = maBN;
+                } else if (sotheBHYT) {
+                    infoName = "Thẻ BHYT: ";
+                    infoValue = sotheBHYT;
+                }
+
+                var html =
+                    "<table style='width:100%;'>" + "<caption style='padding-bottom: 8px; font-weight:bold;'>Kết quả đăng ký: " +
+                        "<span style='font-style:italic; font-weight:normal;'>" +
+                        "(nhớ ghi lại cẩn thận)</span></caption>" +
+                        "<tr><td width='40%' style='align:left;'>" + "Ngày ĐK: " + "</td><td>" + ngayDK + "</td></tr>" +
+                        "<tr><td>" + infoName + "</td><td>" + infoValue + "</td></tr>" +
+                        "<tr><td>Phòng khám:</td><td>" + tenPhongKham + "</td></tr>" +
+                        "<tr><td>Số thứ tự:</td><td style='font-weight:bold; font-size:12pt;'>" + soThuTu + "</td></tr>" +
+                        "<tr><td>Số lượt chờ:</td><td>" + luotCho + "</td></tr>" +
+                        "<tr><td>Giờ khám:</td><td>" + gio + ":" + phut + "</td></tr>" +
+                        "</table>";
+
+                var qrDecodedText =
+                    "<ul style='margin-left: -15%;'>" +
+                        "<li>" + "Ngày ĐK: " + ngayDK + "</li>" +
+                        "<li>" + infoName + infoValue + "</li>" +
+                        "<li>" + "Phòng Khám: " + tenPhongKham + "</li>" +
+                        "<li>" + "Số thứ tự: " + "<span style='font-weight:bold; font-size:12pt;'>" + soThuTu + "</span>" + "</li>" +
+                        "<li>" + "Số lượt chờ: " + luotCho + "</li>" +
+                        "<li>" + "Giờ khám: " + gio + ":" + phut + "</li>" +
+                        "</ul>";
+
+                //hiển thị thẻ đăng ký bằng chữ vào divResult
+                $('#divResult').html('');
+                $('#divResult').html(html);
+
+                $('#divDisplay').show();
+
+                //text để tạo QRcode
+                var qrText = "Ngày: " + ngayDK + "\r\n" + "Phòng khám: " + infoValue + "\r\n" + "Số thứ tự: " + soThuTu + "\r\n" + "Lượt chờ: " +
+                    luotCho + "\r\n" + "Giờ khám: " + gio + ":" + phut;
+
+                //tạo qrcode vào divQRCode
+                var imgCode = "";
+
+                try {
+
+                    var qr = $('#divQRcode').qrcode({
+                        width: 100,
+                        height: 100,
+                        text: qrText
+                    });
+
+                    var canvas = $('#divQRcode canvas');
+
+                    //chuyển qrcode thành base64
+                    imgCode = canvas.get(0).toDataURL("image/png");
+
+                    //hiện ảnh qrcode vào myImage
+                    $('#myImage').show();
+                    $('#myImage').attr('src', '');
+                    $('#myImage').attr('src', imgCode);
+
+                    //lưu imgCode và qrDecodedText vào localstorage và sắp xếp ảnh qrcode menu
+                    imageForQrcodeMenu(qrCodeCount, imgCode, qrDecodedText, "qr");
+
+                    imgCode = null;
+                    $('#divQRcode').empty();
+
+                } catch (err) {
+                    return false;
+                }
+
+                /*****************************/
+                var text = "Ảnh QRcode này đã được lưu vào máy.";
+                $('.cont').find('.ui-block-b').find('.pText').text(text);
+
+                if (qrCodeCount < 2) { //cho hiện btnCntReg khi số lượng qrcode =< 3
+                    if (!bOnePerson)
+                        $('#btnCtnReg').css('visibility', 'visible');
+                    else {
+                        $('#btnCtnReg').css('visibility', 'hidden');
+                    }
+                } else {
+                    var htmlText = "";
+                    if (!bOnePerson)
+                        //html = "<p><span style='color:red; font-weight:bold;'>Đã hết giới hạn.  Chế độ đăng ký Nhiều Người chỉ cho phép đăng ký tối đa 3 người.</span></p>";
+                        htmlText = "<p>Ảnh QRcode này đã được lưu vào máy. <br/>" +
+                            "<span style='color:red; font-weight:bold;'>Đã hết giới hạn.  Chế độ đăng ký Nhiều Người chỉ cho phép đăng ký tối đa 3 người.</span></p>";
+                    else {
+                        htmlText = "<p><span style='color:red; font-weight:bold;'>Đã hết giới hạn.  Chế độ đăng ký Một Người chỉ dho cho phép đăng ký tối đa 1 người.</span></p>";
+                    }
+                    $('.cont').find('.ui-block-b').find('.pText').html('');
+                    $('.cont').find('.ui-block-b').find('.pText').html(htmlText);
+                }
+
+                //myImage
+                $('.cont').find('.ui-block-a').find('.clsQrI').css('visibility', 'visible');
+                $('#myImage').show();
+
+                $('#btnDone').html('Đăng ký thành công!\n Bấm vào đây để kết thúc.').wrap('<pre />');
+
+                $('html, body').scrollTop(250);
+
+                /******************************/
+            }
+            //else {//khung giờ đăng ký đã kín
+            //    $('#btnDone').html('Xin lỗi, khung giờ đăng ký đã kín.\n Bấm vào đây để đăng ký lại.').wrap('<pre />');
+            //    $('#btnDone').show();
+            //}
+
+            $('#divCont').show();
+        }
+
+        //lưu qr code và sắp xếp ảnh cho qrcode menu
+        //function imageForQrcodeMenu(qrCount, imgCode, mode) {
+        function imageForQrcodeMenu(qrCount, imgCode, qrDecodedText, mode) {
+            //qrCodeImage bắt đầu từ 1
+            if (mode == "qr")
+                qrCount++;
+
+            switch (qrCount) {
+
+            case 1:
+                $('#imgQr').attr('src', 'Images/qr1.png');
+                if (imgCode !== "" && imgCode !== null) {
+                    localStorage.setItem("qrCodeImage1", imgCode);
+                    localStorage.setItem("qrCodeText1", qrDecodedText);
+                    if (localStorage.getItem("qrCodeImage1") === null) {
+
+                        //alert("Storing failed");
+                    } else {
+                        //alert("Storing 1 success: " + localStorage.getItem("qrCodeImage1"));
+                        //console.log(localStorage.getItem("qrCodeImage1"));
+                    }
+                }
+                break;
+            case 2:
+                $('#imgQr').attr('src', 'Images/qr2.png');
+                if (imgCode !== "" && imgCode !== null) {
+                    localStorage.setItem("qrCodeImage2", imgCode);
+                    localStorage.setItem("qrCodeText2", qrDecodedText);
+                    if (localStorage.getItem("qrCodeImage2") === null) {
+                        //alert("Storing failed");
+                    } else {
+                        //alert("Storing 2 success:" + localStorage.getItem("qrCodeImage2"));
+                    }
+                }
+                break;
+            case 3:
+                $('#imgQr').attr('src', 'Images/qr3.png');
+                if (imgCode !== "") {
+                    localStorage.setItem("qrCodeImage3", imgCode);
+                    localStorage.setItem("qrCodeText3", qrDecodedText);
+                    if (localStorage.getItem("qrCodeImage3") === null) {
+                        //alert("Storing failed");
+                    } else {
+                        //alert("Storing 3 success:" + localStorage.getItem("qrCodeImage3"));
+                    }
+                }
+                break;
+            }
+        }
+
+        function SpaceCal() {
+            var allStrings = '';
+            for (var key in window.localStorage) {
+                if (window.localStorage.hasOwnProperty(key)) {
+                    allStrings += window.localStorage[key];
+                }
+            }
+            return allStrings ? 3 + ((allStrings.length * 16) / (8 * 1024)) + ' KB' : 'Empty (0 KB)';
+        };
+
+        function qrCodeTable() {
+            var htmlQrTable = "";
+
+            var storageLen = localStorage.length;
+            if (storageLen > 0) {
+                htmlQrTable =
+                    "<table width=100%>" + "<caption style='font-weight:bold; text-align:center;'>Thẻ đăng ký</caption>"
+                for (var i = 0; i < localStorage.length; i++) {
+                    var keyName = localStorage.key(i);
+                    if (keyName.indexOf("qrCodeImage") !== -1) {
+                        var qr = localStorage.getItem(keyName); //base64data
+                        htmlQrTable = htmlQrTable +
+                            "<tr><td><img src=" + qr + "/></td></tr>";
+                    }
+                }
+                htmlQrTable = htmlQrTable + "</table>";
+            }
+            return htmlQrTable;
+        }
+    </script>
+
+</head>
+<body>
+        <div data-role="page" data-theme="b" id="pageMain">
+        
+        <div data-role="content" id="main">
+            <div style="text-align:center;">
+                <img src="Images/logobv.png" style="top:2%; left:50%; right:50%; width: 5.3em; height:4em;" />
+            </div>
+            <div  style="text-align:center; font-weight:bold; font-size: 14pt; margin-top: 2%; font-family:Arial, Helvetica, sans-serif; color:#0B566F; text-shadow: 2px 2px #E1E0E0">
+                BỆNH VIỆN QUẬN 11
+            </div>
+            <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-top: 0.5%; margin-bottom: 30px; font-family: Arial, Helvetica, sans-serif; color: #0591C0;">
+                ĐĂNG KÝ KHÁM BỆNH
+            </div>
+
+
+
+            <div id="divIntro" style="font-size: 10pt; text-align: center; vertical-align: middle; margin-top: 20%;  border: solid #acacac thin; box-shadow: 3px 3px 8px grey; background-color: white;">
+                <p style="font-size: 12pt; font-weight: bold;">Hân hạnh chào đón quí khách.</p>
+                <p>Để bắt đầu, vui lòng chọn:</p>
+
+                <fieldset class="ui-grid-a" style="margin-left: 1em;">
+<!--                    <div class="ui-block-a" style="width: 12%; margin-right: 1em;"><img id="singleMode" src="Images/pBlue.png" class="introImg"/></div>
+                    <div class="ui-block-b" id="divTextRow1" style="width: 80%; height: 3em; text-align: left; padding-top: 0.7em;">Đăng ký chỉ <span style="font-weight: bold;"> một người.</div>-->
+
+                    <div class="ui-block-a" style="width: 12%; margin-right: 1em;"><img id="singleMode" src="Images/pBlue.png" class="introImg"/></div>
+                    <div class="ui-block-b" id="divTextRow1" style="width: 80%; height: 3em; text-align: left; padding-top: 0.7em;" onclick="$('#singleMode').trigger('click');">Đăng ký chỉ <span style="font-weight: bold;"> một người.</span></div>
+
+
+
+                    <div class="ui-block-a" style="width: 12%; margin-right: 1em;"><img id="multiMode" src="Images/ppBlue.png" class="introImg" style="margin-top: 5px;"/></div>
+                    <div class="ui-block-b" id="divTextRow2" style="width: 80%; height: 3em; text-align: left; padding-top: 0.5em;" onclick="$('#multiMode').trigger('click');">Đăng ký <span style="font-weight: bold;">nhiểu người. Các thông tin cá nhân đã lưu sẽ bị xoá.</span></div>
+
+                    <div class="ui-block-a" style="width: 12%; margin-right: 1em;"><img id="qrMode" src="Images/qr.png" class="introImg" width="25" style="margin-top: 5px; width: 30px;"/></div>
+                    <div class="ui-block-b" id="divTextRow3" style="width: 80%; height: 3em; text-align: left; padding-top: 0.7em; margin-bottom: 2em;" onclick="$('#qrMode').trigger('click');">Xem (các) thẻ đăng ký đã có.</div>
+                </fieldset>
+            </div>
+
+            <div id="divStatus" data-role="content" data-mini="true" style="text-align: left; margin-bottom: -15px;">
+                <div class="ui-grid-a">
+                  <div class="ui-block-a" style="text-align: left;"><img id="imgStatus" src='' style="width: 30px;"/></div>
+                  <div class="ui-block-b" style="text-align: right;"><a href="#pageHelp"><img src="Images/QuestionMark.png" style="width: 25px;"/></a></div>
+                </div>
+                <!--<img id="imgStatus" src='' style="width: 30px;"/>-->
+                </div>
+
+            <div data-role="collapsible-set">
+                <div data-role="collapsible" id="divInfo" data-mini="true">
+                    <h4><span id="partOne">1. Thông tin cá nhân</span></h4>
+
+                    <p style="font-size: 10pt; margin-bottom: 8px; margin-top: -5px; "> Chọn một trong các thông tin sau và nhập:</p>
+                    <fieldset class="ui-grid-a" id="fdset" data-mini="true">
+                        <div class="ui-block-a">
+                            <label for="rdoMaBN" style="font-size: 8pt; font-style: normal;">Mã B.Nhân</label>
+                            <input type="radio" name="rdoInfo" id="rdoMaBN" class="info" value="Mã Bệnh Nhân"/>
+                        </div>
+                        <div class="ui-block-b">
+                            <label for="rdoHoTen" style="font-size: 8pt; font-style: normal;">Họ Tên</label>
+                            <input type="radio" name="rdoInfo" id="rdoHoTen" class="info" value="Họ Tên"/>
+                        </div>
+                        <div class="ui-block-a">
+                            <label for="rdoSoDT" style="font-size: 8pt; font-style: normal;">Số ĐT</label>
+                            <input type="radio" name="rdoInfo" id="rdoSoDT" class="info" value="Số Điện thoại"/>
+                        </div>
+                        <div class="ui-block-b">
+                            <label for="rdoMaBH" style="font-size: 8pt; font-style: normal;">Số thẻ BH</label>
+                            <input type="radio" name="rdoInfo" id="rdoMaBH" class="info" value="Số Thẻ BHYT"/>
+                        </div>
+                        <div class="ui-block-a">
+                            <label for="rdoSoCC" style="font-style: normal;">Số C. Cước</label>
+                            <input type="radio" name="rdoInfo" id="rdoSoCC" class="info" value="Số Căn Cước"/>
+                        </div>
+                        <div class="ui-block-b">
+                            <label for="rdoSoHC" style="font-style: normal;">Số H.Chiếu</label>
+                            <input type="radio" name="rdoInfo" id="rdoSoHC" class="info" value="Số Hộ Chiếu"/>
+                        </div>
+                    </fieldset>
+
+                    <div data-role="content" id="divInfoEntry" data-mini="true" style="margin: -15px;">
+                        <label id="lblInfoName" for="idInfo" style="font-family: Arial, Helvetica, sans-serif; font-size: 9pt; font-weight: bold; padding-left: 5px; padding-top: 5px;"></label>
+                        <input type="text" name="idInfo" id="idInfo" value="" placeholder="Nhập thông tin..." data-clear-btn="true" style="border: none;"/>
+                    </div>
+
+                    <div id="divInfoButtons" data-role="content" data-mini="true" style="text-align: right; margin-top: -2px;">
+                        <a href="#" id="aSave" data-role="button" data-mini="true" data-inline="true" style="font-size: 8pt;">Lưu</a>
+                        <a href="#" id="aReset" data-role="button" data-mini="true" data-inline="true" data-icon="refresh" data-iconpos="right" style="font-size: 8pt;">Chọn thông tin khác</a>
+                        <a href="#" id="aNext1" data-role="button" data-icon="arrow-r" data-mini="true" data-inline="true" data-iconpos="right" style="font-size: 8pt;">Tiếp</a>
+                    </div>
+
+                    <div data-role="popup" id="popupDialogSaveSuccess" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Lưu thành công!"&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div data-role="popup" id="popupDialogSaveError" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Lỗi khi lưu!"&nbsp;&nbsp;&nbsp;
+                    </div>
+
+                    <div data-role="popup" id="popupDialogData" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Chưa chọn loại thông tin nhập!"&nbsp;&nbsp;&nbsp;
+                    </div>
+
+                    <div data-role="popup" id="popupDialog" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Chưa nhập thông tin!"&nbsp;&nbsp;&nbsp;
+                    </div>
+
+                    <div data-role="popup" id="popupDialogPhongKham" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Chưa chọn Phòng Khám!"&nbsp;&nbsp;&nbsp;
+                    </div>
+
+                    <div data-role="popup" id="popupDialogQrNumber" data-overlay-theme="a">
+                        &nbsp;&nbsp;&nbsp;"Chỉ đăng ký tối đa 3 người!"&nbsp;&nbsp;&nbsp;
+                    </div>
+
+                </div>
+                <div data-role="collapsible" id="divNgayDK" data-mini="true">
+                    <h4><span id="partTwo">2. Ngày đăng ký</span></h4>
+                    <!--<div data-role="fieldcontain">-->
+                        <label for="calendar" style="font-family: Arial, Helvetica, sans-serif; font-size: 9pt; font-style: italic">(Chạm vào ngày để chọn ngày khác)</label>
+                        <input type="text" id="calendar" name="calendar"
+                               style="font-weight: bold; font-size: 12pt; font-family: Arial, Helvetica, sans-serif; text-align: center; border: none;"/>
+
+                    <!--</div>-->
+                    <div id="divNext2" style="text-align: right; border: none;">
+                        <a href="#" id="aNext2" data-role="button" data-icon="arrow-r" data-mini="true" data-inline="true" data-iconpos="right" style="font-size: 8pt;">Tiếp</a>
+                    </div>
+                    
+
+                </div>
+                <div data-role="collapsible" id="divPhongKham" data-mini="true">
+                    <h4><span id="partThree">3. Phòng Khám</span></h4>
+                    <!--<fieldset class="ui-field-contain" data-mini="true">-->
+                        <select name="sltPhongKham" id="sltPhongKham" class="clsPhongKham">
+                            <option value="0">[Chọn phòng khám...]</option>
+                            <option value="Bác Sĩ Gia Đình">Bác Sĩ Gia Đình</option>
+                            <option value="CCHS Tích Cực Chống Độc">CCHS Tích Cực Chống Độc</option>
+                            <option value="CLS Trực Tiếp">CLS Trực Tiếp</option>
+                            <option value="CTCH (Cơ-Xương-Khớp)">CTCH (Cơ-Xương-Khớp)</option>
+                            <option value="Da liễu">Da liễu</option>
+                            <option value="Dinh dưỡng">Dinh dưỡng
+                            <option value="Gan">Gan</option>
+                            <option value="Hô Hấp">Hô Hấp</option>
+                            <option value="Mắt">Mắt</option>
+                            <option value="Ngoại Tổng Quát">Ngoại Tổng Quát
+                            <option value="Nhi">Nhi</option>
+                            <option value="Nội BHYT">Nội BHYT</option>
+                            <option value="Nội BHYT (1.4)">Nội BHYT (1.4)</option>
+                            <option value="Nội BHYT(1.5)">Nội BHYT (1.5)</option>
+                            <option value="Nội BHYT(1.6)">Nội BHYT (1.4)</option>
+                            <option value="Phụ Khoa">Phụ Khoa</option>
+                            <option value="Răng Hàm Mặt">Răng Hàm Mặt</option>
+                            <option value="Tai Mũi Họng">Tai Mũi Họng</option>
+                            <option value="Thai">Thai</option>
+                            <option value="Vật Lý Trị Liệu">Vật Lý Trị Liệu</option>
+                            <option value="YHDT">YHDT</option>
+                            <option value="YHDT Tạ Uyên">YHDT Tạ Uyên</option>
+                            <option value="Thay băng HSCC">Thay băng HSCC</option>
+                            <option value="Thay băng T.Quát">Thay băng T.Quát</option>
+                            <option value="Thay băng Chấn Thương">Thay băng Chấn Thương</option>
+                        </select>
+                    <!--</fieldset>-->
+                    <div id="divNext3" style="text-align: right;">
+                        <a href="#" id="aNext3" data-role="button" data-icon="arrow-r" data-mini="true" data-inline="true" data-iconpos="right" style="font-size: 8pt;">Tiếp</a>
+                    </div>
+                </div>
+                <div data-role="collapsible" id="divDangKy" data-mini="true" data-collapsed="true">
+                    <h4>4. Đăng ký</h4>
+                    <div id="divRegConfirm" data-role="content" style="margin-left: -5%; width: 100%; text-align: center; font-size: 10pt;">
+                        <p id="pConfirm" style="font-size: 10pt;">Qúi khách chắc chắn đăng ký với các thông tin đã nhập?</p>
+                        <div id="divRegButtons" data-role="content" data-mini="true" style="text-align: center;">
+                            <a href="#" id="aCancel" data-role="button" data-mini="true" data-inline="true" style="font-size: 8pt;">Huỷ</a>
+                            <a href="#" id="aRegister" data-role="button" data-mini="true" data-inline="true" style="font-size: 8pt;">Đăng ký</a>
+                        </div>
+                    </div>
+                    <div id="divDisplay" data-role="content" style="width: 100%; font-size: 10pt; color: navy; padding-top:-1em;">
+                        <div id="divResult" class="clsRegText" data-role="content" data-mini="true" style="background: #FFF8CC; margin-top:-1em; margin-left:-1em;">
+                        </div>
+                    </div>
+                    <div id="divCont" class="cont" data-role="content" style="text-align: right; margin-top: -20px;">
+                        <div class="ui-grid-a" data-mini="true">
+                            <div class="ui-block-a" style="text-align: left;"><img id="myImage" class="clsQrI" src="" style="text-align: left;"/>
+                            </div>
+                            <div class="ui-block-b" id="divDkCont">
+                                <div id="divQrMsg"  class="pText" style="text-align: left; font-size: 10pt; padding-top:5px;"></div>
+                                <a href="#" id="btnCtnReg" data-role="button" data-mini="true" data-inline="true" data-icon="arrow-u" style="font-size: 8pt; visibility: hidden;">ĐK tiếp...</a>
+
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 300px;">&nbsp;&nbsp;&nbsp;</div>
+
+            <div id="divQRcode" style="visibility: hidden;"></div>
+        </div>
+    </div>
+
+
+<div data-role="page" data-theme="b" id="pageQR">
+    <div data-role="header" class="ui-bar ui-bar-b" data-add-back-btn="true" data-icon="arrow-r" data-back-btn-text="Trở lại" data-mini="true" style="height: 30px;">
+        <a href="#pageMain" data-icon="arrow-l" data-mini="true">Trở lại</a>
+        <h4>Thẻ đăng ký</h4>
+    </div>
+    <div id="divQrcontents" data-role="content">
+        <div id="divDeleteConfirm" data-role="content" data-mini="true" style="width: 80%; margin-left: 30px;">
+            <div style="float: left; width: 65%; font-size: 10pt; padding-right: 5px;">
+                Để xoá hẳn các thẻ này và bắt đầu phiên đăng ký mới:
+                Bấm nút 'Xoá.
+            </div>
+            <div style="float: left; width: 30%; text-align: left;">
+                <a href="#" class="clsDelete" type="button" id="btnDelete" data-transition="slide" data-mini="true" data-direction="reverse" rel="external">Xoá</a>
+            </div>
+        </div>
+        
+        <div data-role="content">
+            <fieldset class="ui-grid-a" id="fdsResult">
+                
+            </fieldset>
+        </div>
+
+    </div>
+</div>
+
+<div data-role="page" data-theme="b" id="pageHelp">
+    <div data-role="header" class="ui-bar ui-bar-b" data-add-back-btn="true" data-icon="arrow-r" data-back-btn-text="Trở lại" data-mini="true" style="height: 30px;">
+        <a href="#pageMain" data-icon="arrow-l" data-mini="true" style="margin-top: 3px; display: inline-block;"></a>
+        <h4>Hướng dẫn</h4>
+    </div>
+
+    <a id="helpTop" href="#"></a>
+
+    <!--<a id="helpTop" href="#" class="back-to-top" data-ajax="false"></a>-->
+
+    <div data-role="content" id="divHelpContents" style="font-size: 10pt; padding-left: 0.5em; padding-right: 0.5em;">
+            <ul style="margin-left: 10%;">
+                <li><a href="#help1" data-ajax="false">Các ký hiệu và từ viết tắt</a></li>
+                <li><a href="#help2" data-ajax="false">Đăng ký một người</a></li>
+                <li><a href="#help3" data-ajax="false">Đăng ký nhiều người</a></li>
+                <li><a href="#help4" data-ajax="false">Chọn ngày đăng ký</a></li>
+                <li><a href="#help5" data-ajax="false">Chọn Phòng Khám</a></li>
+                <li><a href="#help6" data-ajax="false">Đăng ký</a></li>
+                <li><a href="#help7" data-ajax="false">Xem (các) thẻ đăng ký</a></li>
+            </ul>
+
+            <a id="top" data-ajax="false"></a>
+
+            <div id="helpIntro" style="margin-top: 3em;">
+                <p>
+                    Chương trình miễn phí này giúp quí khách đăng ký khám bệnh tại Bệnh Viện Quận 11 tiện lợi thông qua Internet. Chương trình yêu cầu quí khách có
+                    kết nối Internet.
+                </p>
+                <p>Nếu đăng ký thành công, bệnh viện sẽ gởi về máy thẻ đăng ký bằng chữ và ảnh QRCode.  Thẻ này tự động lưu vào máy quí khách.  Khi đến khám chỉ việc mở ra cho nhân viên xem.</p>
+            </div>
+            <div id="help1" style="margin-top: 20px;">
+                <p style="font-weight: bold;">Các ký hiệu</p>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a" style="width: 10%; text-align: left; height: 60px;"><img src="Images/pBlue.png" style="width: 25px; display: block;"/>
+                    </div>
+                    <div class="ui-block-b" style="width: 90%; height: 60px;">Đăng ký một người. Trong chế độ này quí khách có thể lưu lại thông tin các nhân cho lần đăng ký sau.</div>
+                    <div class="ui-block-a" style="width: 10%; text-align: left; height: 60px;"><img src="Images/ppBlue.png" style="width: 25px; display: block;"/>
+                    </div>
+                    <div class="ui-block-b" style="width: 90%; height: 60px;">Đăng ký nhiều người. Trong chế độ này, thông tin cá nhân không thể lưu lại. Trong phiên đăng ký có thể đăng ký tối đa 3 người.</div>
+                    <div class="ui-block-a" style="width: 10%; text-align: left;"><img src="Images/qr.png" style="width: 25px; display: block;"/>
+                    </div>
+                    <div class="ui-block-b" style="width: 90%; height: 60px;">Dùng để trình bày (các) thẻ đăng ký khi vào phòng khám</div>
+                </div>
+
+                <p style="font-weight: bold;">Các từ viết tắt:</p>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a" style="width: 40%; text-align: left; padding-left:0.2em;">Mã B.Nhân</div>
+                    <div class="ui-block-b" style="width: 60%;">Mã Bệnh Nhân</div>
+                    <div class="ui-block-a" style="width: 40%; text-align: left; padding-left:0.2em;">Số ĐT</div>
+                    <div class="ui-block-b" style="width: 60%;">Số Điện Thoại</div>
+                    <div class="ui-block-a" style="width: 40%; text-align: left; padding-left:0.2em;">Số thẻ BH</div>
+                    <div class="ui-block-b" style="width: 60%;">Số thẻ Bảo Hiểm Y Tế</div>
+                    <div class="ui-block-a" style="width: 40%; text-align: left; padding-left:0.2em;">Số C.Cước</div>
+                    <div class="ui-block-b" style="width: 60%;">Số Căn Cước (Số CMND)</div>
+                </div>
+
+            </div>
+            <div id="help2" style="margin-top: 0em;">
+                <p style="font-weight: bold;">Đăng ký một người</p>
+                <p>
+                    <ol>
+                        <li>Chọn loại thông tin cá nhân muốn nhập</li>
+                        <li>Nhập thông tin</li>
+                        <li>Lưu thông tin, nếu muốn</li>
+                        <li>Nếu lưu thành công, hệ thống sẽ thông báo. Bấm vào chỗ trống để tắt thông báo.</li>
+                        <li>Bấm nút tiếp để sang bước kế tiếp</li>
+                    </ol>
+                </p>
+                <p>
+                    - Nếu lưu thông tin cá nhân: thông tin này sẽ hiện ra trong lần đăng ký sau, giúp tiện lợi không phải nhập lại.
+                </p>
+                <p>
+                    - Nút "Chọn thông tin khác": nếu muốn thay đổi thông tin cá nhân khác.  Chú ý: thông tin đang lưu sẽ bị xoá. Sau khi bấm nút này, lập lại các bước từ 1 đến 5. Rồi bấm nút "Lưu", nếu cần.
+                </p>
+                <a href="#helpTop" data-ajax="false" style="margin-left: 70%;">Về đầu trang</a>
+            </div>
+            <div id="help3" style="margin-top: 20px;">
+                <p style="font-weight: bold;">Đăng ký nhiều người</p>
+                <p>Trong chế độ này, quí khách có thể đăng ký nhiều người trong một phiên đăng ký. Chú ý: không thể lưu lại thông tin cá nhân.</p>
+                <ol>
+                    <li>Chọn loại thông tin cá nhân muốn nhập</li>
+                    <li>Nhập thông tin</li>
+                    <li>Bấm nút tiếp để sang bước kế tiếp</li>
+                </ol>
+                <p>
+                    - Nút "Chọn thông tin khác": nếu muốn thay đổi thông tin cá nhân khác. Sau khi bấm nút này, lập lại các bước từ 1 đến 3.
+                </p>
+                <a href="#helpTop" data-ajax="false" style="margin-left: 70%;">Về đầu trang</a>
+            </div>
+            <div id="help4">
+                <p style="font-weight: bold;">Chọn ngày đăng ký</p>
+                <p>
+                    Nếu muốn thay đổi ngày hiện tại, chạm vào ngày hiện tại trong phần "2. Ngày Đăng ký" lịch chọn ngày sẽ hiện ra.
+                    Lịch này không hiện các ngày Chúa Nhật và chỉ hiện các ngày trong khoảng 30 ngày tính từ ngày hiện tại.
+                </p>
+                <a href="#helpTop" data-ajax="false" style="margin-left: 70%;">Về đầu trang</a>
+            </div>
+            <div id="help5">
+                <p style="font-weight: bold;">Phòng Khám</p>
+                <p>Bấm vào "Chọn Phòng Khám" danh sách các Phòng Khám sẽ hiện ra. Chọn Phòng Khám trên danh sách này.</p>
+            </div>
+            <div id="help6">
+                <p style="font-weight: bold;">Đăng ký</p>
+                <p>
+                    Sau khi nhập thông tin cá nhân, ngày đăng ký và chọn Phòng Khám. Phần Đăng Ký sẽ hiện ra.
+                    <br/>- Nút "Huỷ" dùng để huỷ bỏ các thông tin vừa nhập và bắt đầu các thông tin đăng ký mới khác.
+                    <br/>- Nút "Đăng Ký" dùng để đăng ký khám với các thông tin đã nhập.
+                    <br/>- Sau khi đăng ký thành công, bệnh viện trả về thẻ đăng ký gồm nội dung bằng chữ và ảnh QRCode của thẻ.
+                    <br/>- Nút "Tiếp" dùng để đăng ký tiếp một người mới trong chế độ đăng ký nhiều người. Trong chế độ đăng ký Một Người nút này không xuất hiện.
+                </p>
+                <a href="#helpTop" data-ajax="false" style="margin-left: 70%;">Về đầu trang</a>
+            </div>
+            <div id="help7" style="margin-top: 20px; display: block;">
+                <p style="font-weight: bold;">Xem (các) thẻ đăng ký</p>
+                <p>Nếu đăng ký một người hay nhiều người thành công, (các) thẻ đăng ký và ảnh QRCode sẽ được lưu trên máy người dùng. Khi vào phòng khám, sẽ mở ra cho nhân viên xem thẻ đã đăng ký.</p>
+                <p>Sau khi xem xong, bấm nút "Xoá" hai lần để xoá các thẻ này khỏi máy và bắt đầu một phiên đăng ký khác.</p>
+            </div>
+            <a href="#helpTop" data-ajax="false">Về đầu trang</a>
+    </div>
+
+</div>
+
+</body>
+</html>
